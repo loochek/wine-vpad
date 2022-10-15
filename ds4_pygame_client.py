@@ -97,7 +97,7 @@ def main():
     print("Gamepad connected!")
     print(f"Opening pipe {FIFO_PATH}")
 
-    if not os.path.isfile(FIFO_PATH):
+    if not os.path.exists(FIFO_PATH):
         print(f"{FIFO_PATH} is not exist!")
         print("Seems that Vpad DLL side is not running yet")
         print("Start target application in Wine and try again")
@@ -108,6 +108,7 @@ def main():
         return
 
     fifo_file = open(FIFO_PATH, "wb")
+    print(f"Opened pipe")
 
     def fifo_send(bytes):
         fifo_file.write(bytes)
@@ -136,7 +137,6 @@ def main():
                 fifo_send(struct.pack("iHH", VPAD_BUTTONS_RELEASE, ds2vpad_buttons[event.button], 0))
             elif event.type == pygame.JOYHATMOTION:
                 hat_state = event.value
-                print(hat_state)
                 for i in range(2):
                     if old_hat_state[i] != hat_state[i]:
                         if old_hat_state[i] != 0:
