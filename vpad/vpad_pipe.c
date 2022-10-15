@@ -9,26 +9,29 @@
 #include "vpad_pipe.h"
 #include "vpad_debug.h"
 
-static const char* fifo_path = "/home/user/fifo";
+static const char* FIFO_PATH = "/tmp/vpad";
 static int fifo_fd = -1;
 
 int vpad_open_pipe()
 {
-    int res = mkfifo(fifo_path, S_IRUSR | S_IWUSR);
+    // Remove old pipe if present
+    remove(FIFO_PATH);
+
+    int res = mkfifo(FIFO_PATH, S_IRUSR | S_IWUSR);
     if (res < 0)
     {
-        VPAD_ERROR("Unable to create named pipe %s: %s", fifo_path, strerror(errno)); 
+        VPAD_ERROR("Unable to create named pipe %s: %s", FIFO_PATH, strerror(errno)); 
         return -1;
     }
 
-    fifo_fd = open(fifo_path, O_RDONLY | O_NONBLOCK);
+    fifo_fd = open(FIFO_PATH, O_RDONLY | O_NONBLOCK);
     if (fifo_fd < 0)
     {
-        VPAD_ERROR("Unable to open named pipe %s: %s", fifo_path, strerror(errno)); 
+        VPAD_ERROR("Unable to open named pipe %s: %s", FIFO_PATH, strerror(errno)); 
         return -1;
     }
 
-    VPAD_LOG("Created named pipe %s", fifo_path);
+    VPAD_LOG("Created named pipe %s", FIFO_PATH);
     return 0;
 }
 
@@ -52,7 +55,7 @@ bool vpad_get_next_event(VpadEvent* event)
 
     VPAD_DEBUG("Event is present");
 
-    res = read(fifo_fd, &event, sizeof(VpadEvent));
+    res = read(fifo_fd, event, sizeof(VpadEvent));
     if (res < 0)
     {
         VPAD_ERROR("Pipe read() error: %s", strerror(errno)); 
@@ -75,12 +78,12 @@ void vpad_close_pipe()
     close(fifo_fd);
     fifo_fd = -1;
 
-    int res = remove("/home/user/fifo");
+    int res = remove(FIFO_PATH);
     if (res < 0)
     {
-        VPAD_ERROR("Unable to remove named pipe %s: %s", fifo_path, strerror(errno));
+        VPAD_ERROR("Unable to remove named pipe %s: %s", FIFO_PATH, strerror(errno));
         return;
     }
 
-    VPAD_LOG("Removed named pipe %s", fifo_path);
+    VPAD_LOG("Removed named pipe %s", FIFO_PATH);
 }

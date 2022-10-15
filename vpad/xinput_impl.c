@@ -7,9 +7,6 @@
 #include "vpad_pipe.h"
 #include "vpad_debug.h"
 
-// Not defined in MinGW's xinput.h for some reason
-#define XINPUT_GAMEPAD_GUIDE 0x0400
-
 XINPUT_GAMEPAD vpad_state;
 XINPUT_STATE vpad_report_state;
 bool vpad_connected = false;
@@ -199,12 +196,12 @@ static void vpad_update()
             break;
 
         case VpadButtonsPress:
-            vpad_state.wButtons &= event.buttons;
+            vpad_state.wButtons |= event.buttons;
             VPAD_DEBUG("Received VpadButtonsPress");
             break;
 
         case VpadButtonsRelease:
-            vpad_state.wButtons |= ~event.buttons;
+            vpad_state.wButtons &= ~event.buttons;
             VPAD_DEBUG("Received VpadButtonsRelease");
             break;
 
