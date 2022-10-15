@@ -1,6 +1,6 @@
-@ stdcall -private DllMain(long long ptr)
-@ stdcall XInputEnable(long)
-@ stdcall XInputGetCapabilities(long long ptr)
-@ stdcall XInputGetDSoundAudioDeviceGuids(long ptr ptr)
-@ stdcall XInputSetState(long ptr)
-@ stdcall XInputGetState(long ptr)
+@ stdcall -private DllMain(long long ptr) DllMain
+@ stdcall XInputEnable(long) XInputEnable
+@ stdcall XInputGetCapabilities(long long ptr) XInputGetCapabilities
+@ stdcall XInputGetDSoundAudioDeviceGuids(long ptr ptr) XInputGetDSoundAudioDeviceGuids
+@ stdcall XInputSetState(long ptr) XInputSetState
+@ stdcall XInputGetState(long ptr) XInputGetState

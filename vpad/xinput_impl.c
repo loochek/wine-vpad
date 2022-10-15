@@ -180,6 +180,8 @@ static void vpad_init()
     }
 
     vpad_connected = true;
+    memset(&vpad_report_state.Gamepad, 0, sizeof(XINPUT_GAMEPAD));
+    vpad_report_state.dwPacketNumber = 0;
     VPAD_LOG("Vpad is connected as gamepad 0");
 }
 
@@ -190,48 +192,56 @@ static void vpad_update()
     VpadEvent event;
     while (vpad_get_next_event(&event))
     {
-        vpad_state.wButtons &= XINPUT_GAMEPAD_START;
-        // switch (event.type)
-        // {
-        // case VpadDummyEvent:
-        //     break;
+        switch (event.type)
+        {
+        case VpadDummyEvent:
+            VPAD_DEBUG("Received VpadDummyEvent");
+            break;
 
-        // case VpadButtonsPress:
-        //     vpad_state.wButtons &= event.buttons;
-        //     break;
+        case VpadButtonsPress:
+            vpad_state.wButtons &= event.buttons;
+            VPAD_DEBUG("Received VpadButtonsPress");
+            break;
 
-        // case VpadButtonsRelease:
-        //     vpad_state.wButtons |= ~event.buttons;
-        //     break;
+        case VpadButtonsRelease:
+            vpad_state.wButtons |= ~event.buttons;
+            VPAD_DEBUG("Received VpadButtonsRelease");
+            break;
 
-        // case VpadLeftTriggerMove:
-        //     vpad_state.bLeftTrigger = event.trigger_value;
-        //     break;
+        case VpadLeftTriggerMove:
+            vpad_state.bLeftTrigger = event.trigger_value;
+            VPAD_DEBUG("Received VpadLeftTriggerMove");
+            break;
 
-        // case VpadRightTriggerMove:
-        //     vpad_state.bRightTrigger = event.trigger_value;
-        //     break;
+        case VpadRightTriggerMove:
+            vpad_state.bRightTrigger = event.trigger_value;
+            VPAD_DEBUG("Received VpadRightTriggerMove");
+            break;
 
-        // case VpadStickLXMove:
-        //     vpad_state.sThumbLX = event.axis_value;
-        //     break;
+        case VpadStickLXMove:
+            vpad_state.sThumbLX = event.axis_value;
+            VPAD_DEBUG("Received VpadStickLXMove");
+            break;
 
-        // case VpadStickLYMove:
-        //     vpad_state.sThumbLY = event.axis_value;
-        //     break;
+        case VpadStickLYMove:
+            vpad_state.sThumbLY = event.axis_value;
+            VPAD_DEBUG("Received VpadStickLYMove");
+            break;
 
-        // case VpadStickRXMove:
-        //     vpad_state.sThumbRX = event.axis_value;
-        //     break;
+        case VpadStickRXMove:
+            vpad_state.sThumbRX = event.axis_value;
+            VPAD_DEBUG("Received VpadStickRXMove");
+            break;
 
-        // case VpadStickRYMove:
-        //     vpad_state.sThumbRY = event.axis_value;
-        //     break;
+        case VpadStickRYMove:
+            vpad_state.sThumbRY = event.axis_value;
+            VPAD_DEBUG("Received VpadStickRYMove");
+            break;
 
-        // default:
-        //     VPAD_ERROR("Unknown event");
-        //     break;
-        // }
+        default:
+            VPAD_ERROR("Unknown event");
+            break;
+        }
     }
 
     // Update report state (depends on XInputEnable)
@@ -239,10 +249,11 @@ static void vpad_update()
     if (!vpad_xinput_enabled)
         memset(&vpad_report_state.Gamepad, 0, sizeof(XINPUT_GAMEPAD));
 
-    if (memcmp(&vpad_state, &vpad_report_state.Gamepad, sizeof(XINPUT_GAMEPAD)))
+    if (memcmp(&vpad_state, &vpad_report_state.Gamepad, sizeof(XINPUT_GAMEPAD)) != 0)
     {
         vpad_report_state.Gamepad = vpad_state;
         vpad_report_state.dwPacketNumber++;
+        VPAD_DEBUG("Reported new state");
     }
 }
 
