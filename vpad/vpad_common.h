@@ -41,7 +41,7 @@ typedef struct _VpadEvent
     VpadEventType type;
     union
     {
-        uint16_t buttons;
+        uint16_t button_mask;
         uint8_t trigger_value;
         uint16_t axis_value;
         uint32_t __padding;

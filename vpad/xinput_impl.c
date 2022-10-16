@@ -196,12 +196,12 @@ static void vpad_update()
             break;
 
         case VpadButtonsPress:
-            vpad_state.wButtons |= event.buttons;
+            vpad_state.wButtons |= event.button_mask;
             VPAD_DEBUG("Received VpadButtonsPress");
             break;
 
         case VpadButtonsRelease:
-            vpad_state.wButtons &= ~event.buttons;
+            vpad_state.wButtons &= ~event.button_mask;
             VPAD_DEBUG("Received VpadButtonsRelease");
             break;
 
